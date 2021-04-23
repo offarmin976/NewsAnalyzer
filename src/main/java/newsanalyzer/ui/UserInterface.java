@@ -25,11 +25,9 @@ public class UserInterface
 		Scanner sc = new Scanner(System.in);
 		Query = sc.nextLine();
 
-
+		ctrl.process(Query, Category.health, Endpoint.TOP_HEADLINES);
 	}
 	public void getDataFromCtrl2(){
-
-
 
 		String Query = "";
 		System.out.println("****** Bitte um Eingabe des Suchbegriffes in der Techbranche:");
@@ -38,48 +36,42 @@ public class UserInterface
 
 		ctrl.process(Query, Category.technology, Endpoint.TOP_HEADLINES);
 
-
-
-
 	}
 	public void getDataFromCtrl3(){
 
+		String Query = "";
+		System.out.println("****** Bitte um Eingabe des Suchbegriffes in der Sportbranche:");
+		Scanner sc = new Scanner(System.in);
+		Query = sc.nextLine();
+
+		ctrl.process(Query, Category.sports, Endpoint.TOP_HEADLINES);
+
 	}
 	
-	public void getDataForCustomInput()
-	{
-		try
-		{
-		InputStream input = new BufferedInputStream(new FileInputStream("exception-log.txt"));
-		byte[] buffer = new byte[8192];
+	public void getDataForCustomInput() {
 
-			try {
-				System.out.println("EXC FILE OUTPUT: ");
-				for (int length = 0; (length = input.read(buffer)) != -1; ) {
-					System.out.write(buffer, 0, length);
-				}
-			} finally {
-				input.close();
-			}
-			System.out.println(" +++ END OF LINES +++ ");
-		}
-		catch (IOException e) {
-			System.out.println("EXCEPTION LOG FILE READING INTERRUPTED - ASK PROGRAMMER FOR HELP");
-		}
+		String Query = "";
+		System.out.println("****** Bitte um Eingabe des Suchbegriffes in der Entertainmentbranche:");
+		Scanner sc = new Scanner(System.in);
+		Query = sc.nextLine();
+
+		ctrl.process(Query, Category.entertainment, Endpoint.TOP_HEADLINES);
 	}
+
+
 	public void start() {
 		Menu<Runnable> menu = new Menu<>("User Interfacx");
 		menu.setTitel("PROG2 NEWS API  - Wählen Sie aus:");
-		menu.insert("a", "** Aktuelle Nachrichten nach Suche", this::getDataFromCtrl1);
+		menu.insert("a", "** Aktuelle Nachrichten für die Gesundheits", this::getDataFromCtrl1);
 		menu.insert("b", "** Aktuelle Nachrichten aus der Techwelt", this::getDataFromCtrl2);
-		menu.insert("c", "** Aktuelle Sport Nachrichten", this::getDataFromCtrl3);
-		menu.insert("d", "** Exception Log Output",this::getDataForCustomInput);
+		menu.insert("c", "** Aktuelle Nachrichten vom Sport", this::getDataFromCtrl3);
+		menu.insert("d", "** Aktuelle Nachrichten aus dem Entertainment",this::getDataForCustomInput);
 		menu.insert("q", "** Programm beenden", null);
 		Runnable choice;
 		while ((choice = menu.exec()) != null) {
 			 choice.run();
 		}
-		System.out.println("Program finished");
+		System.out.println("Program finished - Thanks for using the Skynet Media Brainwash System");
 	}
 
     protected String readLine() {

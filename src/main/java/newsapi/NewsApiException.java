@@ -8,7 +8,6 @@ public class NewsApiException extends Exception {
     {
         super(message);
 
-
     }
     public NewsApiException(Throwable cause)
     {
