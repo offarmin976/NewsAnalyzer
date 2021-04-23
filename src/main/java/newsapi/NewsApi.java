@@ -31,6 +31,7 @@ public class NewsApi {
     private String page;
     private String apiKey;
 
+
     public Endpoint getEndpoint() {
         return endpoint;
     }
@@ -104,7 +105,7 @@ public class NewsApi {
         this.endpoint = endpoint;
     }
 
-    protected String requestData() {
+    protected String requestData() throws NewsApiException {
         String url = buildURL();
         System.out.println("URL: "+url);
         URL obj = null;
@@ -112,6 +113,22 @@ public class NewsApi {
             obj = new URL(url);
         } catch (MalformedURLException e) {
             // TOOO improve ErrorHandling
+            throw new NewsApiException("MalformedURLEXCP");
+
+            System.out.println("no legal protocol could be found in a specification string or the string could not be parsed.");
+            try{
+                FileWriter fstream_malformedURL_EXC = new FileWriter("exception-log.txt", true);
+                BufferedWriter out = new BufferedWriter(fstream_malformedURL_EXC);
+                PrintWriter pWriter = new PrintWriter(out, true);
+                e.printStackTrace(pWriter);
+
+            }
+            catch(Exception ie)
+            {
+                throw new RuntimeException("Could not write Exception to file We should pray", ie);
+
+            }
+
             e.printStackTrace();
         }
         HttpURLConnection con;
@@ -125,7 +142,21 @@ public class NewsApi {
             }
             in.close();
         } catch (IOException e) {
-            // TOOO improve ErrorHandling
+
+
+            System.out.println("a problem occured - produced by failed or interrupted I/O operations.");
+            try{
+                FileWriter fstream_IO_EXC = new FileWriter("exception-log.txt", true);
+                BufferedWriter out = new BufferedWriter(fstream_IO_EXC);
+                PrintWriter pWriter = new PrintWriter(out, true);
+                e.printStackTrace(pWriter);
+
+            }
+            catch(Exception ie)
+            {
+                throw new RuntimeException("Could not write Exception to file We should pray", ie);
+            }
+
             System.out.println("Error "+e.getMessage());
         }
         return response.toString();
@@ -133,62 +164,84 @@ public class NewsApi {
 
     protected String buildURL() {
         // TODO ErrorHandling
-        String urlbase = String.format(NEWS_API_URL,getEndpoint().getValue(),getQ(),getApiKey());
-        StringBuilder sb = new StringBuilder(urlbase);
 
-        if(getFrom() != null){
-            sb.append(DELIMITER).append("from=").append(getFrom());
+        try {
+            String urlbase = String.format(NEWS_API_URL, getEndpoint().getValue(), getQ(), getApiKey());
+            StringBuilder sb = new StringBuilder(urlbase);
+
+            if (getFrom() != null) {
+                sb.append(DELIMITER).append("from=").append(getFrom());
+            }
+            if (getTo() != null) {
+                sb.append(DELIMITER).append("to=").append(getTo());
+            }
+            if (getPage() != null) {
+                sb.append(DELIMITER).append("page=").append(getPage());
+            }
+            if (getPageSize() != null) {
+                sb.append(DELIMITER).append("pageSize=").append(getPageSize());
+            }
+            if (getLanguage() != null) {
+                sb.append(DELIMITER).append("language=").append(getLanguage());
+            }
+            if (getSourceCountry() != null) {
+                sb.append(DELIMITER).append("country=").append(getSourceCountry());
+            }
+            if (getSourceCategory() != null) {
+                sb.append(DELIMITER).append("category=").append(getSourceCategory());
+            }
+            if (getDomains() != null) {
+                sb.append(DELIMITER).append("domains=").append(getDomains());
+            }
+            if (getExcludeDomains() != null) {
+                sb.append(DELIMITER).append("excludeDomains=").append(getExcludeDomains());
+            }
+            if (getqInTitle() != null) {
+                sb.append(DELIMITER).append("qInTitle=").append(getqInTitle());
+            }
+            if (getSortBy() != null) {
+                sb.append(DELIMITER).append("sortBy=").append(getSortBy());
+            }
+            return sb.toString();
         }
-        if(getTo() != null){
-            sb.append(DELIMITER).append("to=").append(getTo());
+        catch(Exception e)
+        {
+            System.out.println("a problem occured - produced probably by a missing value operation.");
+            try{
+                FileWriter fstream_IO_EXC = new FileWriter("exception-log.txt", true);
+                BufferedWriter out = new BufferedWriter(fstream_IO_EXC);
+                PrintWriter pWriter = new PrintWriter(out, true);
+                e.printStackTrace(pWriter);
+
+            }
+            catch(IOException eio)
+            {
+                throw new RuntimeException("Could not write Exception to file We should pray", eio);
+
+            }
         }
-        if(getPage() != null){
-            sb.append(DELIMITER).append("page=").append(getPage());
-        }
-        if(getPageSize() != null){
-            sb.append(DELIMITER).append("pageSize=").append(getPageSize());
-        }
-        if(getLanguage() != null){
-            sb.append(DELIMITER).append("language=").append(getLanguage());
-        }
-        if(getSourceCountry() != null){
-            sb.append(DELIMITER).append("country=").append(getSourceCountry());
-        }
-        if(getSourceCategory() != null){
-            sb.append(DELIMITER).append("category=").append(getSourceCategory());
-        }
-        if(getDomains() != null){
-            sb.append(DELIMITER).append("domains=").append(getDomains());
-        }
-        if(getExcludeDomains() != null){
-            sb.append(DELIMITER).append("excludeDomains=").append(getExcludeDomains());
-        }
-        if(getqInTitle() != null){
-            sb.append(DELIMITER).append("qInTitle=").append(getqInTitle());
-        }
-        if(getSortBy() != null){
-            sb.append(DELIMITER).append("sortBy=").append(getSortBy());
-        }
-        return sb.toString();
+        return "";
     }
 
     public NewsReponse getNews() {
+
         NewsReponse newsReponse = null;
         String jsonResponse = requestData();
-        if(jsonResponse != null && !jsonResponse.isEmpty()){
+        if (jsonResponse != null && !jsonResponse.isEmpty()) {
 
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 newsReponse = objectMapper.readValue(jsonResponse, NewsReponse.class);
-                if(!"ok".equals(newsReponse.getStatus())){
-                    System.out.println("Error: "+newsReponse.getStatus());
+                if (!"ok".equals(newsReponse.getStatus())) {
+                    System.out.println("Error: " + newsReponse.getStatus());
                 }
-            } catch (JsonProcessingException e) {
-                System.out.println("Error: "+e.getMessage());
+            } catch (JsonProcessingException ej) {
+                System.out.println("Error: " + ej.getMessage());
+
             }
+
         }
-        //TODO improve Errorhandling
+
         return newsReponse;
-    }
-}
+}}
 
