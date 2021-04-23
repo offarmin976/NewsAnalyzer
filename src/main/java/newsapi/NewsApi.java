@@ -114,7 +114,7 @@ public class NewsApi {
         } catch (MalformedURLException e) {
             // TOOO improve ErrorHandling
             throw new NewsApiException("MalformedURLEXCP");
-
+            /*
             System.out.println("no legal protocol could be found in a specification string or the string could not be parsed.");
             try{
                 FileWriter fstream_malformedURL_EXC = new FileWriter("exception-log.txt", true);
@@ -128,8 +128,8 @@ public class NewsApi {
                 throw new RuntimeException("Could not write Exception to file We should pray", ie);
 
             }
+            */
 
-            e.printStackTrace();
         }
         HttpURLConnection con;
         StringBuilder response = new StringBuilder();
@@ -223,7 +223,7 @@ public class NewsApi {
         return "";
     }
 
-    public NewsReponse getNews() {
+    public NewsReponse getNews() throws NewsApiException {
 
         NewsReponse newsReponse = null;
         String jsonResponse = requestData();

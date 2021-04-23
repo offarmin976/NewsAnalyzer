@@ -25,20 +25,11 @@ public class UserInterface
 		Scanner sc = new Scanner(System.in);
 		Query = sc.nextLine();
 
-		NewsApi newsapi_tech = new NewsApiBuilder()
-				.setApiKey(Controller.APIKEY)
-				.setQ(Query)
-				.setEndPoint(Endpoint.TOP_HEADLINES)
-				.setSourceCategory(Category.health)
-				.createNewsApi();
 
 	}
 	public void getDataFromCtrl2(){
 
-		Article arr = new Article();
-		String NameAuth = arr.getAuthor();
-		String Short = "";
-		Short = ctrl.AuthorShort(NameAuth);
+
 
 		String Query = "";
 		System.out.println("****** Bitte um Eingabe des Suchbegriffes in der Techbranche:");
@@ -52,29 +43,6 @@ public class UserInterface
 
 	}
 	public void getDataFromCtrl3(){
-
-		Article arr = new Article();
-		String NameAuth = arr.getAuthor();
-		String Short = "";
-		Short = ctrl.AuthorShort(NameAuth);
-
-		NewsApi newsapi_sports = new NewsApiBuilder()
-				.setApiKey(Controller.APIKEY)
-				.setEndPoint(Endpoint.TOP_HEADLINES)
-				.setSourceCategory(Category.sports)
-				.createNewsApi();
-
-
-
-		NewsReponse NR_Sport = newsapi_sports.getNews();
-
-		if(NR_Sport != null){
-			int articles_number = NR_Sport.getTotalResults();
-			System.out.println("++++ Total Hit Count for the chosen Topic on News API: " + articles_number + " ++++ Branche: " + Country.us + " ++++ Shortes Author Name is: " + Short);
-			List<Article> articles = NR_Sport.getArticles();
-			articles.stream().forEach(article -> System.out.println(article.toString()));
-		}
-
 
 	}
 	

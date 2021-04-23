@@ -26,7 +26,6 @@ public class Controller {
 
 		UserInterface UI = new UserInterface();
 
-			//TODO implement Error handling
 
 		try
 		{
@@ -41,31 +40,19 @@ public class Controller {
 
 			if (NR != null) {
 				int articles_number = NR.getTotalResults();
-				System.out.println("++++ Total Hit Count for the chosen Topic on News API: " + articles_number + " ++++ Branche: " + cat + " ++++ Shortes Author Name is: " + Short);
 				List<Article> articles = NR.getArticles();
+				System.out.println("++++ Total Hit Count for the chosen Topic on News API: " + articles_number + " ++++ Branche: " + cat + " ++++ Shortes Author Name is: " + AuthorShort(articles));
+
 				articles.stream().forEach(article -> System.out.println(article.toString()));
 			}
 
 
 		}
-		catch (NewsApiException)
+		catch (NewsApiException e)
 		{
 
 		}
 
-
-
-			//TODO load the news based on the parameters
-
-
-
-
-
-
-		UI.getDataFromCtrl1();
-		UI.getDataFromCtrl2();
-		UI.getDataFromCtrl3();
-		UI.getDataForCustomInput();
 
 		}
 		//TODO implement methods for analysis
@@ -78,7 +65,7 @@ public class Controller {
 		for (Article a: articles)
 		{
 
-			if ((shortest == null)|| (a.getAuthor().length() < shortest.length())
+			if ((shortest == null) || (a.getAuthor().length() < shortest.length()))
 			{
 				shortest = a.getAuthor();
 			}
