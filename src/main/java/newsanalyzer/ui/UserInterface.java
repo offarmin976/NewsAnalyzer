@@ -37,6 +37,7 @@ public class UserInterface
 		Query = sc.nextLine();
 
 		ctrl.process(Query, Category.health, Endpoint.TOP_HEADLINES);
+		GLOBAL_QUERY = Query;
 	}
 	public void getDataFromCtrl2(){
 
@@ -46,6 +47,7 @@ public class UserInterface
 		Query = sc.nextLine();
 
 		ctrl.process(Query, Category.technology, Endpoint.TOP_HEADLINES);
+		GLOBAL_QUERY = Query;
 
 	}
 	public void getDataFromCtrl3(){
@@ -78,7 +80,8 @@ public class UserInterface
 				List<Article> articles = NR_Perfo.getArticles();
 				List<String> art_url = ctrl.getUrls(articles);
 				try {
-					dwn.saveUrl2File(art_url.toString());
+					for(String s : art_url)
+						dwn.saveUrl2File(s);
 				}
 				catch (NullPointerException e)
 				{
