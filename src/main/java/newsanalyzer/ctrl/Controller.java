@@ -13,10 +13,13 @@ import newsapi.enums.Category;
 import newsapi.enums.Country;
 import newsapi.enums.Endpoint;
 import newsapi.enums.SortBy;
+import newsreader.downloader.Downloader;
 
 import java.io.Console;
 import java.text.Collator;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -40,9 +43,16 @@ public class Controller {
 			if (NR != null) {
 				int articles_number = CounterOfArtic(NR);
 				List<Article> articles = NR.getArticles();
-				System.out.println("++++ Total Hit Count for the chosen Topic on News API: " + articles_number + " ++++ Branche: " + cat + " ++++ Shortes Author Name is: " + AuthorShort(articles));
+				List<Article> art_sort = AlphaSort(articles);
+
+
+
+
+				System.out.println("++++ Total Hit Count for the chosen Topic on News API: " + articles_number + " ++++ Branche: " + cat + " ++++ Shortes Author Name is: " + AuthorShort(articles) + "and most Articels:" + MostArticles(articles_number, articles));
 				System.out.println("");
-				articles.stream().forEach(article -> System.out.println(article.toString()));
+				art_sort.stream().forEach(article -> System.out.println(article.toString()));
+
+
 			}
 
 		}
@@ -75,27 +85,42 @@ public class Controller {
 				}
 
 			}
-
 			return shortest;
 		}
 		catch(NullPointerException e)
 		{
-			System.out.println("Anscheinend war Magie im Spiel - Keine Autoren gefunden bzw. keine vorhanden");
+			System.out.println("Keine Autoren gefunden bzw. keine vorhanden");
 			return "";
 		}
 	}
 
-	private static String MostArticles(int ArtCount, List <Article> articles)
+	private String MostArticles(int ArtCount, List <Article> articles) throws NewsApiException
 	{
-		//TODO
+		return articles
+				.stream()
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+				.entrySet()
+				.stream()
+				.max(Comparator.comparing(Map.Entry::getValue)).get().getKey().getSource().getName();
 
-		return "";
 	}
 
-	private static String AlphaSort(List <Article> aritcle)
+	private List <Article> AlphaSort(List <Article> aritcle) throws NewsApiException
 	{
-		//TODO
-		return "";
+		return aritcle
+				.stream()
+				.filter(article -> Objects.nonNull((article.getAuthor())))
+				.sorted(Comparator.comparing(Article::getAuthor))
+				.collect(Collectors.toList());
+	}
+
+	public List <String> getUrls(List <Article> article_url)
+	{
+		return article_url
+				.stream()
+				.map(article -> article.getUrl())
+				.filter(article -> article != null)
+				.collect(Collectors.toList());
 	}
 
 	public Object getData() {

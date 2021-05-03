@@ -8,15 +8,26 @@ import java.util.Scanner;
 import newsanalyzer.ctrl.Controller;
 import newsapi.NewsApi;
 import newsapi.NewsApiBuilder;
+import newsapi.NewsApiException;
 import newsapi.beans.Article;
 import newsapi.beans.NewsReponse;
 import newsapi.enums.Category;
 import newsapi.enums.Country;
 import newsapi.enums.Endpoint;
+import newsreader.downloader.Downloader;
 
 public class UserInterface 
 {
 	private Controller ctrl = new Controller();
+
+	private Downloader dwn = new Downloader() {
+		@Override
+		public int process(List<String> urls) {
+			return 0;
+		}
+	};
+
+	String GLOBAL_QUERY = "";
 
 	public void getDataFromCtrl1(){
 
@@ -45,6 +56,42 @@ public class UserInterface
 		Query = sc.nextLine();
 
 		ctrl.process(Query, Category.sports, Endpoint.TOP_HEADLINES);
+		GLOBAL_QUERY = Query;
+	}
+
+	public void getDataFromCtrl4() throws NullPointerException{
+
+		String Query = "Corona";
+
+		try
+		{
+			NewsApi newsapi = new NewsApiBuilder()
+					.setApiKey(Controller.APIKEY)
+					.setQ(GLOBAL_QUERY)
+					.setEndPoint(Endpoint.TOP_HEADLINES)
+					.setSourceCategory(Category.health)
+					.createNewsApi();
+
+			NewsReponse NR_Perfo = newsapi.getNews();
+
+			if (NR_Perfo != null) {
+				List<Article> articles = NR_Perfo.getArticles();
+				List<String> art_url = ctrl.getUrls(articles);
+				try {
+					dwn.saveUrl2File(art_url.toString());
+				}
+				catch (NullPointerException e)
+				{
+					System.out.println("Fehler im Download Bereich");
+				}
+			}
+
+		}
+		catch (NewsApiException e)
+		{
+			System.out.println("Hauptklassen Objekt Fehler");
+
+		}
 
 	}
 	
@@ -66,6 +113,7 @@ public class UserInterface
 		menu.insert("b", "** Aktuelle Nachrichten aus der Techwelt", this::getDataFromCtrl2);
 		menu.insert("c", "** Aktuelle Nachrichten vom Sport", this::getDataFromCtrl3);
 		menu.insert("d", "** Aktuelle Nachrichten aus dem Entertainment",this::getDataForCustomInput);
+		menu.insert("o","** Letze Suche als Download starten", this::getDataFromCtrl4);
 		menu.insert("q", "** Programm beenden", null);
 		Runnable choice;
 		while ((choice = menu.exec()) != null) {
