@@ -14,6 +14,8 @@ import newsapi.enums.Country;
 import newsapi.enums.Endpoint;
 import newsapi.enums.SortBy;
 import newsreader.downloader.Downloader;
+import newsreader.downloader.ParalellDownloader;
+import newsreader.downloader.SequentialDownloader;
 
 import java.io.Console;
 import java.text.Collator;
@@ -44,9 +46,6 @@ public class Controller {
 				int articles_number = CounterOfArtic(NR);
 				List<Article> articles = NR.getArticles();
 				List<Article> art_sort = AlphaSort(articles);
-
-
-
 
 				System.out.println("++++ Total Hit Count for the chosen Topic on News API: " + articles_number + " ++++ Branche: " + cat + " ++++ Shortes Author Name is: " + AuthorShort(articles) + "and most Articels:" + MostArticles(articles_number, articles));
 				System.out.println("");
@@ -121,6 +120,8 @@ public class Controller {
 				.map(article -> article.getUrl())
 				.filter(article -> article != null)
 				.collect(Collectors.toList());
+
+
 	}
 
 	public Object getData() {

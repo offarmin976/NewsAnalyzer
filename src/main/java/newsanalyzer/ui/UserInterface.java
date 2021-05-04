@@ -15,6 +15,8 @@ import newsapi.enums.Category;
 import newsapi.enums.Country;
 import newsapi.enums.Endpoint;
 import newsreader.downloader.Downloader;
+import newsreader.downloader.ParalellDownloader;
+import newsreader.downloader.SequentialDownloader;
 
 public class UserInterface 
 {
@@ -82,10 +84,26 @@ public class UserInterface
 				try {
 					for(String s : art_url)
 						dwn.saveUrl2File(s);
+					SequentialDownloader seqDwnld = new SequentialDownloader();
+					ParalellDownloader paraDwnld = new ParalellDownloader();
+					seqDwnld.process(art_url);
+					paraDwnld.process(art_url);
+
 				}
+
 				catch (NullPointerException e)
 				{
 					System.out.println("Fehler im Download Bereich");
+				}
+
+				long TimeBEfore = System.currentTimeMillis();
+				dwn.process(art_url);
+
+				if(dwn instanceof ParalellDownloader){
+					System.out.println("Parallel: " + (System.currentTimeMillis() - TimeBEfore));
+				}
+				else if(dwn instanceof SequentialDownloader){
+					System.out.println(("Sequential: " + (System.currentTimeMillis() - TimeBEfore)));
 				}
 			}
 
